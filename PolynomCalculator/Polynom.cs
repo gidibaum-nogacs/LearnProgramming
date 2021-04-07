@@ -6,54 +6,80 @@ using System.Threading.Tasks;
 
 namespace PolynomCalculator
 {
-    class Polynom
+    public class Polynom
     {
         public int[] Variables { get; set; }
 
-        public Polynom(int[] variables)
+        public Polynom(IEnumerable<int> variables)
         {
-            Variables = variables;
+            Variables = variables.ToArray();
         }
-
 
         public static Polynom operator +(Polynom pa, Polynom pb)
         {
+            var map = new Dictionary<int, int>();// map:= exp -> coef
 
-            var a = pa.Variables;
-            var b = pb.Variables;
-            int difference = Math.Max(a.Length, b.Length) - Math.Min(a.Length, b.Length);
-
-            if (a.Length > b.Length)
+            for (var i = 0; i < pa.Variables.Length; i++)
             {
-                Array.Resize(ref b, b.Length + difference);
-            }
-            else
-            {
-                Array.Resize(ref a, a.Length + difference);
+                map[i] = pa.Variables[i];
             }
 
-
-
-            List<int> c = new List<int>();
-
-            for (int i = 0; i < a.Length; i++)
+            for (var i = 0; i < pb.Variables.Length; i++)
             {
-                c.Add(a[i] + b[i]);
+                if (map.TryGetValue(i, out var c))
+                {
+                    map[i] += pb.Variables[i];
+                }
+                else
+                {
+                    map[i] = pb.Variables[i];
+                }
             }
 
-            foreach (int i in c)
-            {
-                Console.WriteLine(i);
-            }
+            //return new Polynom(map.Values); //not sure on the ordering of the map
 
-            return new Polynom(c.ToArray());
+            return map
+                .OrderBy(kv=>kv.Key) // order by exponent
+                .Select(kv=>kv.Value)
+                .ToPolynom();
         }
+
+        //public static Polynom operator +(Polynom pa, Polynom pb)
+        //{
+        //    var a = pa.Variables;
+        //    var b = pb.Variables;
+
+        //    var difference = Math.Max(a.Length, b.Length) - Math.Min(a.Length, b.Length);
+
+        //    if (a.Length > b.Length)
+        //    {
+        //        Array.Resize(ref b, b.Length + difference);
+        //    }
+        //    else
+        //    {
+        //        Array.Resize(ref a, a.Length + difference);
+        //    }
+
+        //    var c = new List<int>();
+
+        //    for (var i = 0; i < a.Length; i++)
+        //    {
+        //        c.Add(a[i] + b[i]);
+        //    }
+
+        //    foreach (var i in c)
+        //    {
+        //        Console.WriteLine(i);
+        //    }
+
+        //    return new Polynom(c);
+        //}
 
         public static Polynom operator -(Polynom pa, Polynom pb)
         {
             var a = pa.Variables;
             var b = pb.Variables;
-            int difference = Math.Max(a.Length, b.Length) - Math.Min(a.Length, b.Length);
+            var difference = Math.Max(a.Length, b.Length) - Math.Min(a.Length, b.Length);
 
             if (a.Length > b.Length)
             {
@@ -64,59 +90,57 @@ namespace PolynomCalculator
                 Array.Resize(ref a, a.Length + difference);
             }
 
-            List<int> c = new List<int>();
+            var c = new List<int>();
 
-            for (int i = 0; i < a.Length; i++)
+            for (var i = 0; i < a.Length; i++)
             {
                 c.Add(a[i] - b[i]);
             }
 
-            foreach (int i in c)
+            foreach (var i in c)
             {
                 Console.WriteLine(i);
             }
 
-            return new Polynom(c.ToArray());
+            return new Polynom(c);
         }
 
         public static Polynom operator *(Polynom pa, Polynom pb)
         {
-            int[] a = pa.Variables;
-            int[] b = pb.Variables;
+            var a = pa.Variables;
+            var b = pb.Variables;
 
-            int size = Math.Min(a.Length, b.Length);
-            int[][] mult = new int[size][];
-            List<Polynom> g = new List<Polynom>(); 
+            var size = Math.Min(a.Length, b.Length);
+            var mult = new int[size][];
+            var g = new List<Polynom>(); 
 
             Console.WriteLine("multiplies works!");
 
-            for (int x = 0; x < b.Length; x++)
+            for (var x = 0; x < b.Length; x++)
             {
-                
                 var numbers = new List<int>();
                 var num = b[x];
                 if (num == 0)
                 {
                     continue;
                 }
-                for (int v = 0; v < x; v++)
+                for (var v = 0; v < x; v++)
                 {
                     numbers.Add(0);
                 }
-                for (int i = 0; i < a.Length; i++)
+                for (var i = 0; i < a.Length; i++)
                 {
-                  
-                  var newNum =  num * a[i];
+                    var newNum =  num * a[i];
                     numbers.Add(newNum);
                 }
 
-                Polynom o = new Polynom(numbers.ToArray());
+                var o = new Polynom(numbers.ToArray());
                 g.Add(o);
             }
 
-            Polynom final = new Polynom(new int[2]);
+            var final = new Polynom(new int[2]);
 
-            foreach (Polynom o in g)
+            foreach (var o in g)
             {
                 final += o;
             }
@@ -129,19 +153,13 @@ namespace PolynomCalculator
             return final;
         }
 
-
-
-      
-
-
         public override string ToString()
         {
+            var fullPolynomial = "";
 
-            string FullPolynom = "";
+            var counter = 0;
 
-            int counter = 0;
-
-            for (int i = 0; i < Variables.Length; i++)
+            for (var i = 0; i < Variables.Length; i++)
             {
                 counter ++;
                 var power = Array.IndexOf(Variables , i) + 1;
@@ -153,17 +171,17 @@ namespace PolynomCalculator
 
                 if (i == 0)
                 {
-                    FullPolynom += $"{Variables[i]} ";
+                    fullPolynomial += $"{Variables[i]} ";
                     continue;
                 }
                
                 if (i == 1)
                 {
-                    if (!String.IsNullOrEmpty(FullPolynom))
+                    if (!String.IsNullOrEmpty(fullPolynomial))
                     {
-                        FullPolynom += "+ ";
+                        fullPolynomial += "+ ";
                     }               
-                    FullPolynom += $"{Variables[i]}x ";
+                    fullPolynomial += $"{Variables[i]}x ";
                     continue;
                 }
                 //if (i == Variables.Length - 1)
@@ -171,14 +189,14 @@ namespace PolynomCalculator
                 //    FullPolynom += $"{Variables[i]}x^{i + 1}";
                 //    continue;
                 //}
-                if (!String.IsNullOrEmpty(FullPolynom))
+                if (!String.IsNullOrEmpty(fullPolynomial))
                 {
-                    FullPolynom += " +";
+                    fullPolynomial += " +";
                 }
-                FullPolynom += $" { Variables[i] }x^{ i } ";
+                fullPolynomial += $" { Variables[i] }x^{ i } ";
 
             }
-            return FullPolynom;
+            return fullPolynomial;
 
         }
     }

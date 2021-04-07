@@ -54,6 +54,7 @@
     </Compile>
     <Compile Include="Polynom.cs" />
     <Compile Include="PolynomAlignService.cs" />
+    <Compile Include="PolynomExtensions.cs" />
     <Compile Include="PolynomService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
