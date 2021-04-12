@@ -150,20 +150,69 @@ namespace PolynomCalculator
             textBox1.Text = clear;
             textBox2.Text = clear;
             textBox3.Text = clear;
+            textBox4.Text = clear;
             label4.Text = clear;
             label5.Text = clear;
+            label7.Text = clear;
+          
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            string polystring = textBox5.Text;
+            label8.Text = _PolynomService.PolynomToArray(polystring);
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
             
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                double variable = double.Parse(textBox4.Text);
+                var text = this.textBox1.Text;
+                int[] numbers = _PolynomService.InputToArray(text);
+                //double variable = 4;
+
+                //var numbers = new int[2] { 3, 2 };
+
+
+                label7.Text = $"{_PolynomService.Evaluate(numbers, variable)}";
+            } catch
+            {
+                label7.Text = "x must be a number";
+            }
+                
+           
+
+
 
 
 
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void label7_Click(object sender, EventArgs e)
         {
-            string pnom = "hoochie ^mama";
-            Console.WriteLine("hoochie mama");
-            _PolynomService.StringToPolynom(pnom);
-      
+
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
