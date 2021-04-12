@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 namespace PolynomCalculator
 {
     class PolynomService
-    {
-      
-
+    {     
         public int[] InputToArray(string input)
         {
             int counter = 0;
@@ -50,8 +48,6 @@ namespace PolynomCalculator
 
             
         }
-
-        string pnom = " 2x + 3x^2 + 4x^4 + 1";
 
         public Polynom StringToPolynom(string pnom)
         {
@@ -117,18 +113,11 @@ namespace PolynomCalculator
             }
             return sum;
         }
-
-
-     
-
+    
         public string PolynomToArray(string polystring)
         {
-            var plusIndex = polystring.IndexOf('+');
             string[] split = polystring.Split('+');
-            var split2 = new double[split.Length];
             var exponent = new string[split.Length];
-            int coefficientIndex = 0;
-            var powerIndex = 0;
             var final = "";
 
             foreach(string c in split)
@@ -142,17 +131,17 @@ namespace PolynomCalculator
                 }
                 else
                 {
-                    powerIndex = c.IndexOf('^') + 1;
+                    int powerIndex = c.IndexOf('^') + 1;
                     string result = c.Substring(powerIndex);
-                    exponent[int.Parse(result)] = c;                    
+                    exponent[int.Parse(result)] = c;
                 }                
             }
 
             for (int a = 1; a < exponent.Length; a++)
-            {                
-                coefficientIndex = exponent[a].IndexOf('x');
+            {
+                int coefficientIndex = exponent[a].IndexOf('x');
                 exponent[a] = exponent[a].Remove(coefficientIndex);
-                Console.WriteLine($"this is exponent with out x {exponent[a]}");
+                Console.WriteLine($"exponent with out x {exponent[a]}");
             }
 
             foreach (string i in exponent)
@@ -161,9 +150,49 @@ namespace PolynomCalculator
                 Console.WriteLine($"this is after parsing {i}");
             }
 
-
-
             return final;
+        }
+
+        //1 + 2x  + 3x^2  + 4x^3  + 5x^4  + 6x^5  + 7x^6 
+
+        public void PolynomToArrayUsingDictionary(string polystring)
+        {
+            var stray = polystring.Split('+');
+            var powerindex = 0;
+            double coefficient = 0;
+            var exponentDict = new Dictionary<int, double>();
+
+
+            foreach(string i in stray)
+            {
+                if(!i.Contains('^') && !i.Contains('x'))
+                {
+                    powerindex = 0;
+                }
+
+                else if (!i.Contains('^') && i.Contains('x'))
+                {
+                    powerindex = 1;
+                }
+
+                else if (i.Contains('^'))
+                {
+                    powerindex = i.IndexOf('^') + 1;
+                    coefficient = double.Parse(i.Substring(0,(powerindex-1)));
+                    exponentDict.Add(powerindex, coefficient);
+                }
+            }
+
+
+            string pattern = @"\d";
+            // Create a Regex  
+            Regex rg = new Regex(pattern);
+
+            // Long string  
+            string authors = "Mahesh Chand, Raj Kumar, Mike Gold, Allen O'Neill, Marshal Troll";
+            // Get all matches  
+            MatchCollection matchedAuthors = rg.Matches(authors);
+
         }
     }
 }

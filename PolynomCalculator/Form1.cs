@@ -154,6 +154,8 @@ namespace PolynomCalculator
             label4.Text = clear;
             label5.Text = clear;
             label7.Text = clear;
+            label8.Text = clear;
+            textBox5.Text = clear;
           
         }
 
